@@ -11,8 +11,6 @@ jsonFile.close()
 creds['private_key_id'] = os.environ['PRIVATE_KEY_ID']
 creds['private_key'] = os.environ['PRIVATE_KEY']
 
-print(creds['private_key'])
-
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 APPLICATION_NAME = 'CallScheduler'
 
