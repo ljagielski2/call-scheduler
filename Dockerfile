@@ -1,5 +1,4 @@
-FROM alpine:3.5
-RUN apk add --update python py-pip
+FROM python:3.6
 COPY requirements.txt /src/requirements.txt
 RUN pip install --index-url=http://pypi.python.org/simple/ --trusted-host pypi.python.org -r src/requirements.txt
 COPY server.py /src
