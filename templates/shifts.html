@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        function disableBtn(key) {
+            document.getElementById(key).style.background = "gray";
+            document.getElementById(key).disabled = true;
+        }
+    </script>
+  </head>
+  <body>
+    <div style="text-align:center">
+      <h2>Call Schedule</h2>
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        {% for key,value in shifts.iterrows() %}
+        <form action="{{ url_for('shifts', row=key, payload=employeeNum) }}" method="post">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id={{key}}>
+                {{value['Day'] + ' ' + value['Date'] + ' ' + value['Time']}}
+                </br>
+                {% if value['OnCall'] %}
+                {{ value['OnCall'] }}
+                <script>
+                    disableBtn({{key|string}});
+                </script>
+                {% endif %}
+            </button>
+            <input type="hidden" name="row" value="{{ key }} ">
+        </form>
+          <br>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
