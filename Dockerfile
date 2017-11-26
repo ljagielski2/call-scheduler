@@ -6,5 +6,4 @@ COPY sns_sender.py /src
 COPY spreadsheet_reader.py /src
 COPY credentials.json /src
 COPY templates /src/templates
-COPY buzz /src/buzz
 CMD FLASK_APP=server.py flask run
