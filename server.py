@@ -97,7 +97,7 @@ def shifts(payload):
 
 
 if __name__ == '__main__':
-    #app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
+    app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
     #app.config['SERVER_NAME'] = 'localhost:5000'
     app.secret_key = os.environ['APP_SECRET_KEY']
     with app.app_context():
@@ -111,4 +111,4 @@ if __name__ == '__main__':
             replace_existing=True
         )
     atexit.register(lambda: scheduler.shutdown())
-    app.run(debug=False, port=os.environ.get("PORT", 5000))
+    app.run(debug=False, port=os.environ.get("PORT", 5000), host='0.0.0.0')
