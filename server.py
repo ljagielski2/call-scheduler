@@ -12,6 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from itsdangerous import URLSafeSerializer, BadSignature
 
+app = Flask(__name__)
 prev_employee = None
 
 
@@ -58,22 +59,6 @@ def contact_next_employee():
         send_sms(cur_employee['PhoneNumber'], message)
 
 
-app = Flask(__name__)
-#app.config['SERVER_NAME'] = 'localhost:5000'
-app.secret_key = os.environ['APP_SECRET_KEY']
-with app.app_context():
-    scheduler = BackgroundScheduler()
-    scheduler.start()
-    scheduler.add_job(
-        func=contact_next_employee,
-        trigger=IntervalTrigger(seconds=10),
-        id='sms_job',
-        name='Send sms to next in queue',
-        replace_existing=True
-    )
-atexit.register(lambda: scheduler.shutdown())
-
-
 @app.route("/admin", methods=['GET', 'POST'])
 def admin():
     if request.method == 'GET':
@@ -109,3 +94,21 @@ def shifts(payload):
         SpreadsheetReader.updateAvailableShiftsCell(row, 4, employeeName)
         SpreadsheetReader.updateEmployeesCell(employeeNum, 3, assigned)
         return render_template('done.html', name=employeeName)
+
+
+if __name__ == '__main__':
+    app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
+    #app.config['SERVER_NAME'] = 'localhost:5000'
+    app.secret_key = os.environ['APP_SECRET_KEY']
+    with app.app_context():
+        scheduler = BackgroundScheduler()
+        scheduler.start()
+        scheduler.add_job(
+            func=contact_next_employee,
+            trigger=IntervalTrigger(seconds=10),
+            id='sms_job',
+            name='Send sms to next in queue',
+            replace_existing=True
+        )
+    atexit.register(lambda: scheduler.shutdown())
+    app.run(debug=False, port=os.environ.get("PORT", 5000))

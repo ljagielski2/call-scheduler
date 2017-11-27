@@ -6,4 +6,4 @@ COPY sns_sender.py sns_sender.py
 COPY spreadsheet_reader.py spreadsheet_reader.py
 COPY credentials.json credentials.json
 COPY templates templates
-CMD FLASK_APP=server.py flask run
+CMD python server.py
