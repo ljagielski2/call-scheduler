@@ -97,7 +97,7 @@ def shifts(payload):
 
 
 if __name__ == '__main__':
-    app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
+    #app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
     #app.config['SERVER_NAME'] = 'localhost:5000'
     app.secret_key = os.environ['APP_SECRET_KEY']
     with app.app_context():
