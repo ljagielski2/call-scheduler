@@ -7,7 +7,7 @@ class TestServer(unittest.TestCase):
     def setUp(self):
         print('Setup running')
 
-    def test_admin(self):
+    def test_admin_get(self):
         response = app.test_client().get('/admin')
         self.assertEqual(response.status_code, 200)
 

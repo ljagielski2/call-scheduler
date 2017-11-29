@@ -1,11 +1,11 @@
 import atexit
 import os
-
 from flask import Flask
 from flask import request
 from flask import render_template
 from flask import abort
 from flask import url_for
+from flask import flash
 from sns_sender import send_sms
 from spreadsheet_reader import SpreadsheetReader
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -50,13 +50,12 @@ def contact_next_employee():
             break
 
     if not cur_employee.equals(prev_employee):
-        print('Are they equal? {}'.format(cur_employee.equals(prev_employee)))
         prev_employee = cur_employee
         link = get_activation_link(signed_url)
         message = 'Hi {}, please click on the provided link to choose your on call shift: {}'
         message = message.format(cur_employee['Name'], link)
         print(message)
-        send_sms(cur_employee['PhoneNumber'], message)
+        #send_sms(cur_employee['PhoneNumber'], message)
 
 
 @app.route("/admin", methods=['GET', 'POST'])
@@ -74,9 +73,10 @@ def admin():
 
 @app.route("/shifts/<payload>", methods=['GET', 'POST'])
 def shifts(payload):
+    global prev_employee
     s = get_serializer()
+    shifts = SpreadsheetReader.getAvailableShifts()
     if request.method == 'GET':
-        shifts = SpreadsheetReader.getAvailableShifts()
         try:
             employeeNum = s.loads(payload)
         except BadSignature:
@@ -85,20 +85,26 @@ def shifts(payload):
                                shifts=shifts,
                                employeeNum=employeeNum)
     else:
-        row = int(request.form.get('row'))
         employeeNum = int(payload)
         employees = SpreadsheetReader.getEmployees()
         employeeRow = employees.iloc[employeeNum]
-        employeeName = employeeRow['Name']
-        assigned = int(employeeRow['Assigned']) + 1
-        SpreadsheetReader.updateAvailableShiftsCell(row, 4, employeeName)
-        SpreadsheetReader.updateEmployeesCell(employeeNum, 3, assigned)
-        return render_template('done.html', name=employeeName)
+        if employeeRow.equals(prev_employee):
+            row = int(request.form.get('row'))
+            employeeName = employeeRow['Name']
+            assigned = int(employeeRow['Assigned']) + 1
+            SpreadsheetReader.updateAvailableShiftsCell(row, 4, employeeName)
+            SpreadsheetReader.updateEmployeesCell(employeeNum, 3, assigned)
+            return render_template('done.html', name=employeeName)
+        else:
+            flash('Please wait until it is your turn.')
+            return render_template('shifts.html',
+                                   shifts=shifts,
+                                   employeeNum=employeeNum)
 
 
 if __name__ == '__main__':
-    app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
-    #app.config['SERVER_NAME'] = 'localhost:5000'
+    #app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
+    app.config['SERVER_NAME'] = 'localhost:5000'
     app.secret_key = os.environ['APP_SECRET_KEY']
     with app.app_context():
         scheduler = BackgroundScheduler()
