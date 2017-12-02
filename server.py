@@ -13,7 +13,6 @@ from apscheduler.triggers.interval import IntervalTrigger
 from itsdangerous import URLSafeSerializer, BadSignature
 
 app = Flask(__name__)
-prev_employee = None
 
 
 def get_serializer(secret_key=None):
@@ -31,7 +30,6 @@ def get_activation_link(employeeIdx):
 
 
 def contact_next_employee():
-    global prev_employee
     print('Scheduled send sms job initiated')
     employees = SpreadsheetReader.getEmployees()
     print(employees)
@@ -47,12 +45,13 @@ def contact_next_employee():
         if shifts_not_full and (is_last_employee or row['Assigned'] <= nextRow['Assigned']):
             cur_employee = row
             signed_url = str(index)
+            idx = index
             break
 
-    if not cur_employee.equals(prev_employee):
-        prev_employee = cur_employee
+    if cur_employee['Current'] == 'FALSE':
+        SpreadsheetReader.updateEmployeesCell(idx, 5, True)
         link = get_activation_link(signed_url)
-        message = 'Hi {}, please click on the provided link to choose your on call shift: {}'
+        message = 'Hi {}, please click on the provided link to choose your call shift: {}'
         message = message.format(cur_employee['Name'], link)
         print(message)
         send_sms(cur_employee['PhoneNumber'], message)
@@ -73,7 +72,6 @@ def admin():
 
 @app.route("/shifts/<payload>", methods=['GET', 'POST'])
 def shifts(payload):
-    global prev_employee
     s = get_serializer()
     shifts = SpreadsheetReader.getAvailableShifts()
     if request.method == 'GET':
@@ -88,12 +86,13 @@ def shifts(payload):
         employeeNum = int(payload)
         employees = SpreadsheetReader.getEmployees()
         employeeRow = employees.iloc[employeeNum]
-        if employeeRow.equals(prev_employee):
+        if employeeRow['Current'] == 'TRUE':
             row = int(request.form.get('row'))
             employeeName = employeeRow['Name']
             assigned = int(employeeRow['Assigned']) + 1
             SpreadsheetReader.updateAvailableShiftsCell(row, 4, employeeName)
             SpreadsheetReader.updateEmployeesCell(employeeNum, 3, assigned)
+            SpreadsheetReader.updateEmployeesCell(employeeNum, 5, False)
             return render_template('done.html', name=employeeName)
         else:
             flash('Please wait until it is your turn.')
@@ -104,7 +103,7 @@ def shifts(payload):
 
 if __name__ == '__main__':
     app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
-    #app.config['SERVER_NAME'] = 'localhost:5000'
+    # app.config['SERVER_NAME'] = 'localhost:5000'
     app.secret_key = os.environ['APP_SECRET_KEY']
     with app.app_context():
         scheduler = BackgroundScheduler()
