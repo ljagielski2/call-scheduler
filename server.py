@@ -55,7 +55,7 @@ def contact_next_employee():
         message = 'Hi {}, please click on the provided link to choose your on call shift: {}'
         message = message.format(cur_employee['Name'], link)
         print(message)
-        #send_sms(cur_employee['PhoneNumber'], message)
+        send_sms(cur_employee['PhoneNumber'], message)
 
 
 @app.route("/admin", methods=['GET', 'POST'])
@@ -103,15 +103,15 @@ def shifts(payload):
 
 
 if __name__ == '__main__':
-    #app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
-    app.config['SERVER_NAME'] = 'localhost:5000'
+    app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
+    #app.config['SERVER_NAME'] = 'localhost:5000'
     app.secret_key = os.environ['APP_SECRET_KEY']
     with app.app_context():
         scheduler = BackgroundScheduler()
         scheduler.start()
         scheduler.add_job(
             func=contact_next_employee,
-            trigger=IntervalTrigger(seconds=10),
+            trigger=IntervalTrigger(seconds=600),
             id='sms_job',
             name='Send sms to next in queue',
             replace_existing=True
