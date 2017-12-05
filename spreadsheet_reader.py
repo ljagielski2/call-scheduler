@@ -25,7 +25,8 @@ spreadsheet = gc.open('CallSchedule')
 
 class SpreadsheetReader():
     def getAvailableShifts():
-        gc.login()
+        gc = gspread.authorize(credentials)
+        spreadsheet = gc.open('CallSchedule')
         schedule = spreadsheet.worksheet('Schedule')
         df = pd.DataFrame(
             schedule.get_all_values()[1:],
@@ -33,7 +34,8 @@ class SpreadsheetReader():
         return df
 
     def getEmployees():
-        gc.login()
+        gc = gspread.authorize(credentials)
+        spreadsheet = gc.open('CallSchedule')
         employees = spreadsheet.worksheet('Employees')
         df = pd.DataFrame(
             employees.get_all_values()[1:],
@@ -41,12 +43,14 @@ class SpreadsheetReader():
         return df
 
     def updateAvailableShiftsCell(row, column, value):
-        gc.login()
+        gc = gspread.authorize(credentials)
+        spreadsheet = gc.open('CallSchedule')
         schedule = spreadsheet.worksheet('Schedule')
         # why +2 here?? offset 1 for header, 1 for 0 idx
         schedule.update_cell(row+2, column, value)
 
     def updateEmployeesCell(row, column, value):
-        gc.login()
+        gc = gspread.authorize(credentials)
+        spreadsheet = gc.open('CallSchedule')
         employees = spreadsheet.worksheet('Employees')
         employees.update_cell(row+2, column, value)
