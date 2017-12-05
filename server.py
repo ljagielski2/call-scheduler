@@ -42,7 +42,16 @@ def contact_next_employee():
 
         shifts_not_full = row['Assigned'] < row['NumShifts']
 
-        if shifts_not_full and (is_last_employee or row['Assigned'] <= nextRow['Assigned']):
+        # TODO: refactor
+        lowestAssigned = 100
+        for index2, row2 in employees.copy().iterrows():
+            if int(row2['Assigned']) < lowestAssigned:
+                lowestAssigned = int(row2['Assigned'])
+
+        print(row['Name'])
+        print(shifts_not_full)
+        print(int(row['Assigned']) <= lowestAssigned)
+        if shifts_not_full and (is_last_employee or int(row['Assigned']) <= lowestAssigned):
             cur_employee = row
             signed_url = str(index)
             idx = index
