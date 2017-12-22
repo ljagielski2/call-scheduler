@@ -62,7 +62,7 @@ def contact_next_employee():
                    'to choose your call shift: {}')
         message = message.format(cur_employee['Name'], link)
         print(message)
-        #send_sms(cur_employee['PhoneNumber'], message)
+        send_sms(cur_employee['PhoneNumber'], message)
 
 
 @app.route("/admin", methods=['GET', 'POST'])
@@ -132,7 +132,7 @@ def give(payload):
     link = get_activation_link(employee_num)
     message = message.format(give_to_row['Name'], employee_row['Name'], link)
     print(message)
-    #send_sms(give_to_row['PhoneNumber'], message)
+    send_sms(give_to_row['PhoneNumber'], message)
     flash("Thank you, {}!".format(employee_row['Name']))
     return render_template('shifts.html',
                            shifts=shifts,
@@ -141,8 +141,8 @@ def give(payload):
 
 
 if __name__ == '__main__':
-    #app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
-    app.config['SERVER_NAME'] = 'localhost:5000'
+    app.config['SERVER_NAME'] = 'still-hamlet-15049.herokuapp.com'
+    #app.config['SERVER_NAME'] = 'localhost:5000'
     app.secret_key = os.environ['APP_SECRET_KEY']
     with app.app_context():
         scheduler = BackgroundScheduler()
