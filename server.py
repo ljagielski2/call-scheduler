@@ -155,6 +155,4 @@ if __name__ == '__main__':
             replace_existing=True
         )
     atexit.register(lambda: scheduler.shutdown())
-    print('Port = {}'.format(os.environ.get("PORT", 5000)))
-    print(type(os.environ.get("PORT", 5000)))
-    app.run(debug=False, port=os.environ.get("PORT", 5000), host='0.0.0.0')
+    app.run(debug=False, port=int(os.environ.get("PORT", 5000)), host='0.0.0.0')
