@@ -6,7 +6,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pip --cert /etc/ssl/certs/DigiCert_High_Assurance_EV_Root_CA.pem install -r requirements.txt
+  - pip --cert /etc/ssl/certs/DigiCert_High_Assurance_EV_Root_CA.pem install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
 script:
   python -m pytest -v
 after_success:
