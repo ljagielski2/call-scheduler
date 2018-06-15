@@ -45,8 +45,7 @@ def contact_next_employee():
             if int(row2['Assigned']) < lowestAssigned:
                 lowestAssigned = int(row2['Assigned'])
         # TODO: is is_last_employee check necessary?
-        if shifts_not_full and (is_last_employee
-                                or int(row['Assigned']) <= lowestAssigned):
+        if shifts_not_full and int(row['Assigned']) <= lowestAssigned):
             cur_employee = row
             signed_url = str(index)
             idx = index
