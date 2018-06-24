@@ -1,16 +1,13 @@
-import atexit
 import os
-from flask import Flask
-from flask import request
-from flask import render_template
-from flask import abort
-from flask import url_for
-from flask import flash
-from sns_sender import send_sms
-from spreadsheet_reader import SpreadsheetReader
+import atexit
+
+from flask import Flask, request, render_template, abort, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from itsdangerous import URLSafeSerializer, BadSignature
+
+import sns
+from spreadsheet_reader import SpreadsheetReader
 
 app = Flask(__name__)
 
@@ -21,9 +18,9 @@ def get_serializer(secret_key=None):
     return URLSafeSerializer(secret_key)
 
 
-def get_activation_link(employeeIdx):
+def get_activation_link(employee_idx):
     s = get_serializer()
-    payload = s.dumps(employeeIdx)
+    payload = s.dumps(employee_idx)
     with app.app_context():
         url = url_for('shifts', payload=payload, _external=True)
     return url
@@ -62,7 +59,7 @@ def contact_next_employee():
                    'to choose your call shift: {}')
         message = message.format(cur_employee['Name'], link)
         print(message)
-        send_sms(cur_employee['PhoneNumber'], message)
+        sns.send_sms(cur_employee['PhoneNumber'], message)
 
 
 @app.route("/admin", methods=['GET', 'POST'])
