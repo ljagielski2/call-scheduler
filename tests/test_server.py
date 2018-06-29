@@ -1,6 +1,6 @@
-
-from server import app
 import unittest
+
+from server import APP
 
 
 class TestServer(unittest.TestCase):
@@ -8,7 +8,7 @@ class TestServer(unittest.TestCase):
         print('Setup running')
 
     def test_admin_get(self):
-        response = app.test_client().get('/admin')
+        response = APP.test_client().get('/admin')
         self.assertEqual(response.status_code, 200)
 
 
