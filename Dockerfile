@@ -6,5 +6,4 @@ COPY sns.py sns.py
 COPY spreadsheet_reader.py spreadsheet_reader.py
 COPY credentials.json credentials.json
 COPY templates templates
-COPY tests tests
 CMD python server.py
