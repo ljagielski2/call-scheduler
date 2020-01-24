@@ -1,11 +1,9 @@
 import unittest
 
-from server import APP
+from cs import APP
 
 
 class TestServer(unittest.TestCase):
-    def setUp(self):
-        print('Setup running')
 
     def test_admin_get(self):
         response = APP.test_client().get('/admin')

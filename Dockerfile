@@ -1,9 +1,9 @@
 FROM python:3.6
 COPY requirements.txt /src/requirements.txt
-RUN pip install --trusted-host pypi.python.org -r src/requirements.txt
-COPY server.py server.py
-COPY sns.py sns.py
-COPY spreadsheet_reader.py spreadsheet_reader.py
-COPY credentials.json credentials.json
-COPY templates templates
-CMD python server.py
+WORKDIR /src
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+COPY . /src
+EXPOSE 5000
+RUN chmod 777 setup.sh
+ENTRYPOINT [ "bash" ]
+CMD [ "./setup.sh" ]
