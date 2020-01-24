@@ -11,14 +11,16 @@ Clone the project to your local:
 git clone https://github.com/ljagielski2/call-scheduler.git
 ```
 
-Install dependencies from your terminal:
+Build docker container:
 
 ```
-pip install -r requirements.txt
+docker build -t call-scheduler:latest .
 ```
 
 Start the server:
 
 ```
-python server.py
+docker run -d -p 5000:5000 call-scheduler:latest
 ```
+
+Visit http://0.0.0.0:5000/admin in your browser
