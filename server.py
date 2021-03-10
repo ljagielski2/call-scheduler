@@ -53,7 +53,7 @@ def contact_next_employee():
         SPREADSHEET.update_employees_cell(idx, 5, True)
         link = get_activation_link(signed_url)
         message = ('Hi {}, please click on the provided link '
-                   'to choose your holiday shift: {}')
+                   'to choose your call shift: {}')
         message = message.format(cur_employee['Name'], link)
         print(message)
         sns.send_sms(cur_employee['PhoneNumber'], message)
