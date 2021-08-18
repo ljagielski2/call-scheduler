@@ -22,7 +22,7 @@ class SpreadsheetReader:
 
         return ServiceAccountCredentials.from_json_keyfile_dict(
             creds,
-            scopes='https://www.googleapis.com/auth/spreadsheets'
+            scopes = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         )
 
     def __open_spreadsheet(self):
