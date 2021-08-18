@@ -5,3 +5,4 @@ itsdangerous==0.24
 APScheduler==3.4.0
 Flask==0.12.2
 google_api_python_client==1.6.4
+tzlocal~=2.0
